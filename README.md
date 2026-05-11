@@ -10,6 +10,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 |---------|-----|-----------------|
 | v1.1 | [`v1.1`](https://github.com/chainguard-actions/replace-tokens/tree/v1.1) | — |
 | v1.3 | [`v1.3`](https://github.com/chainguard-actions/replace-tokens/tree/v1.3) | — |
+| v1.4 | [`v1.4`](https://github.com/chainguard-actions/replace-tokens/tree/v1.4) | — |
 
 ## Privacy
 
