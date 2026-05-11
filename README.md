@@ -1,15 +1,42 @@
-# cschleiden/replace-tokens
+# Replace tokens
 
-Replace tokens in files
+Simple GitHub Action to replace tokens in files.
 
-Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at [https://github.com/cschleiden/replace-tokens](https://github.com/cschleiden/replace-tokens).
+## Inputs
 
-## Versions
+- `files` - Glob expression, file name or array of glob/file name
+- `tokenPrefix` - Prefix to use when matching tokens, defaults to `#{`
+- `tokenSuffix` - Suffix to use when matching tokens, defaults to `}#`
 
-| Version | Tag | Upstream commit |
-|---------|-----|-----------------|
-| v1.1 | [`v1.1`](https://github.com/chainguard-actions/replace-tokens/tree/v1.1) | — |
+## Example
 
+If you want to replace `#{CDN}#` and `#{CALLBACK}#` in all of your JS files, add the action to your workflow like this:
+
+```yml
+- uses: cschleiden/replace-tokens@v1
+  with:
+    files: '["**/*.js"]'
+  env:
+    CDN: https://somecdn.com/...
+    CALLBACK: some_value
+```
+
+If you want to use a different token format, you can specify a custom token prefix/suffix. For example, to replace just tokens like `{CDN}` you could add:
+
+```yml
+- uses: cschleiden/replace-tokens@v1
+  with:
+    tokenPrefix: '{'
+    tokenSuffix: '}'
+    files: '["**/*.js"]'
+  env:
+    CDN: https://somecdn.com/...
+```
+
+# Acknowledgements
+
+- Inspired by the excellent https://marketplace.visualstudio.com/items?itemName=qetza.replacetokens Azure Pipelines task.
+- Uses [replace-in-file](https://github.com/adamreisnz/replace-in-file) to do the actual replacement
 ## Privacy
 
 This Action contacts Chainguard's licensing server to verify authorization. Connection metadata (IP address, GitHub repository identifier, timestamp, and any metadata encoded in the auth token) is transmitted to Chainguard, Inc. even if authorization is denied in accordance with our [Privacy Notice](https://www.chainguard.dev/legal/privacy-notice)
