@@ -1,7 +1,0 @@
-{
-  "owner": "cschleiden",
-  "name": "replace-tokens",
-  "visibility": "public",
-  "description": "Replace tokens in files",
-  "block_publish": false
-}
