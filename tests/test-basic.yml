@@ -1,0 +1,48 @@
+name: Test basic token replacement
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create test file with default tokens
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/tests/tmp"
+          cat > "$GITHUB_WORKSPACE/tests/tmp/config.txt" << 'EOF'
+          greeting=#{GREETING}#
+          version=#{APP_VERSION}#
+          EOF
+
+      - name: Run replace-tokens action
+        uses: .
+        with:
+          files: '["tests/tmp/config.txt"]'
+        env:
+          GREETING: hello-world
+          APP_VERSION: 1.2.3
+
+      - name: Assert tokens were replaced
+        run: |
+          CONTENT=$(cat "$GITHUB_WORKSPACE/tests/tmp/config.txt")
+          echo "File content after replacement:"
+          echo "$CONTENT"
+
+          if echo "$CONTENT" | grep -q "#{GREETING}#"; then
+            echo "FAIL: GREETING token was not replaced"
+            exit 1
+          fi
+          if echo "$CONTENT" | grep -q "#{APP_VERSION}#"; then
+            echo "FAIL: APP_VERSION token was not replaced"
+            exit 1
+          fi
+          if ! echo "$CONTENT" | grep -q "hello-world"; then
+            echo "FAIL: expected 'hello-world' in file"
+            exit 1
+          fi
+          if ! echo "$CONTENT" | grep -q "1.2.3"; then
+            echo "FAIL: expected '1.2.3' in file"
+            exit 1
+          fi
+          echo "PASS: all tokens replaced correctly"

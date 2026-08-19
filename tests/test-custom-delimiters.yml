@@ -1,0 +1,50 @@
+name: Test custom token delimiters
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create test file with custom tokens
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/tests/tmp"
+          cat > "$GITHUB_WORKSPACE/tests/tmp/custom.txt" << 'EOF'
+          host={DB_HOST}
+          port={DB_PORT}
+          EOF
+
+      - name: Run replace-tokens action with custom delimiters
+        uses: .
+        with:
+          tokenPrefix: "{"
+          tokenSuffix: "}"
+          files: '["tests/tmp/custom.txt"]'
+        env:
+          DB_HOST: localhost
+          DB_PORT: "5432"
+
+      - name: Assert custom-delimited tokens were replaced
+        run: |
+          CONTENT=$(cat "$GITHUB_WORKSPACE/tests/tmp/custom.txt")
+          echo "File content after replacement:"
+          echo "$CONTENT"
+
+          if echo "$CONTENT" | grep -qE '\{DB_HOST\}'; then
+            echo "FAIL: DB_HOST token was not replaced"
+            exit 1
+          fi
+          if echo "$CONTENT" | grep -qE '\{DB_PORT\}'; then
+            echo "FAIL: DB_PORT token was not replaced"
+            exit 1
+          fi
+          if ! echo "$CONTENT" | grep -q "localhost"; then
+            echo "FAIL: expected 'localhost' in file"
+            exit 1
+          fi
+          if ! echo "$CONTENT" | grep -q "5432"; then
+            echo "FAIL: expected '5432' in file"
+            exit 1
+          fi
+          echo "PASS: custom-delimited tokens replaced correctly"

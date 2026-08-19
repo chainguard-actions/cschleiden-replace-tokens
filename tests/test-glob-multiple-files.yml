@@ -1,0 +1,43 @@
+name: Test glob pattern replacing tokens in multiple files
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create multiple test files with tokens
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/tests/tmp/multi"
+          cat > "$GITHUB_WORKSPACE/tests/tmp/multi/a.env" << 'EOF'
+          SERVICE_URL=#{SERVICE_URL}#
+          EOF
+          cat > "$GITHUB_WORKSPACE/tests/tmp/multi/b.env" << 'EOF'
+          SERVICE_URL=#{SERVICE_URL}#
+          EOF
+
+      - name: Run replace-tokens action with glob pattern
+        uses: .
+        with:
+          files: '["tests/tmp/multi/*.env"]'
+        env:
+          SERVICE_URL: https://example.com/api
+
+      - name: Assert tokens replaced in all matched files
+        run: |
+          for f in "$GITHUB_WORKSPACE/tests/tmp/multi/a.env" "$GITHUB_WORKSPACE/tests/tmp/multi/b.env"; do
+            CONTENT=$(cat "$f")
+            echo "Content of $f:"
+            echo "$CONTENT"
+
+            if echo "$CONTENT" | grep -q "#{SERVICE_URL}#"; then
+              echo "FAIL: SERVICE_URL token was not replaced in $f"
+              exit 1
+            fi
+            if ! echo "$CONTENT" | grep -q "https://example.com/api"; then
+              echo "FAIL: expected replacement value in $f"
+              exit 1
+            fi
+          done
+          echo "PASS: tokens replaced in all matched files"

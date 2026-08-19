@@ -1,0 +1,47 @@
+name: Test token with no matching env var is replaced with empty string
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create test file with an unset token
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/tests/tmp"
+          cat > "$GITHUB_WORKSPACE/tests/tmp/missing.txt" << 'EOF'
+          known=#{KNOWN_VAR}#
+          unknown=#{UNSET_VAR_XYZ_12345}#
+          EOF
+
+      - name: Run replace-tokens action (UNSET_VAR_XYZ_12345 is not set)
+        uses: .
+        with:
+          files: '["tests/tmp/missing.txt"]'
+        env:
+          KNOWN_VAR: present
+
+      - name: Assert known token replaced and unknown token replaced with empty string
+        run: |
+          CONTENT=$(cat "$GITHUB_WORKSPACE/tests/tmp/missing.txt")
+          echo "File content after replacement:"
+          echo "$CONTENT"
+
+          # The known token should be replaced with its value
+          if echo "$CONTENT" | grep -q "#{KNOWN_VAR}#"; then
+            echo "FAIL: KNOWN_VAR token was not replaced"
+            exit 1
+          fi
+          if ! echo "$CONTENT" | grep -q "present"; then
+            echo "FAIL: expected 'present' in file"
+            exit 1
+          fi
+
+          # The unknown token should be replaced with empty string (token removed)
+          if echo "$CONTENT" | grep -q "#{UNSET_VAR_XYZ_12345}#"; then
+            echo "FAIL: UNSET_VAR_XYZ_12345 token was not removed"
+            exit 1
+          fi
+
+          echo "PASS: known token replaced, unknown token cleared"
