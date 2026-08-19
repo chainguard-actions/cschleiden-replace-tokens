@@ -9,7 +9,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 | Version | Tag | Upstream commit |
 |---------|-----|-----------------|
 | v1.1 | [`v1.1`](https://github.com/chainguard-actions/cschleiden-replace-tokens/tree/v1.1) | — |
-| v1.2 | [`v1.2`](https://github.com/chainguard-actions/cschleiden-replace-tokens/tree/v1.2) | — |
+| v1.2 | [`v1.2`](https://github.com/chainguard-actions/cschleiden-replace-tokens/tree/v1.2) | [`8e09184`](https://github.com/cschleiden/replace-tokens/commit/8e091844c27eb36853efbfade5ffca07260f0250) |
 | v1.3 | [`v1.3`](https://github.com/chainguard-actions/cschleiden-replace-tokens/tree/v1.3) | — |
 | v1.4 | [`v1.4`](https://github.com/chainguard-actions/cschleiden-replace-tokens/tree/v1.4) | — |
 
