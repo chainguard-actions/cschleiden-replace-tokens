@@ -1,0 +1,32 @@
+name: Test basic token replacement
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create test file with default tokens
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/tmp-test"
+          echo "Hello #{GREETING}# and #{NAME}#!" > "$GITHUB_WORKSPACE/tmp-test/sample.txt"
+          cat "$GITHUB_WORKSPACE/tmp-test/sample.txt"
+
+      - id: action
+        uses: .
+        with:
+          files: '["${{ github.workspace }}/tmp-test/sample.txt"]'
+        env:
+          GREETING: World
+          NAME: GitHub
+
+      - name: Assert tokens were replaced
+        run: |
+          CONTENT="$(cat "$GITHUB_WORKSPACE/tmp-test/sample.txt")"
+          echo "File content: $CONTENT"
+          if [ "$CONTENT" != "Hello World and GitHub!" ]; then
+            echo "FAIL: expected 'Hello World and GitHub!' but got '$CONTENT'"
+            exit 1
+          fi
+          echo "PASS"

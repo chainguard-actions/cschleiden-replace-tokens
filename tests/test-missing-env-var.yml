@@ -1,0 +1,31 @@
+name: Test token replacement with missing env var
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create test file with a token that has no matching env var
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/tmp-missing"
+          echo "Known: #{KNOWN_VAR}# Unknown: #{UNKNOWN_VAR}#" > "$GITHUB_WORKSPACE/tmp-missing/test.txt"
+          cat "$GITHUB_WORKSPACE/tmp-missing/test.txt"
+
+      - id: action
+        uses: .
+        with:
+          files: '["${{ github.workspace }}/tmp-missing/test.txt"]'
+        env:
+          KNOWN_VAR: hello
+
+      - name: Assert known token replaced and unknown token replaced with empty string
+        run: |
+          CONTENT="$(cat "$GITHUB_WORKSPACE/tmp-missing/test.txt")"
+          echo "File content: $CONTENT"
+          if [ "$CONTENT" != "Known: hello Unknown: " ]; then
+            echo "FAIL: expected 'Known: hello Unknown: ' but got '$CONTENT'"
+            exit 1
+          fi
+          echo "PASS"

@@ -1,0 +1,44 @@
+name: Test token replacement in multiple files
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create multiple test files with tokens
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/tmp-multi"
+          echo "Version: #{APP_VERSION}#" > "$GITHUB_WORKSPACE/tmp-multi/file1.txt"
+          echo "Env: #{APP_ENV}#" > "$GITHUB_WORKSPACE/tmp-multi/file2.txt"
+          echo "file1:" && cat "$GITHUB_WORKSPACE/tmp-multi/file1.txt"
+          echo "file2:" && cat "$GITHUB_WORKSPACE/tmp-multi/file2.txt"
+
+      - id: action
+        uses: .
+        with:
+          files: '["${{ github.workspace }}/tmp-multi/*.txt"]'
+        env:
+          APP_VERSION: "1.2.3"
+          APP_ENV: production
+
+      - name: Assert tokens replaced in file1
+        run: |
+          CONTENT="$(cat "$GITHUB_WORKSPACE/tmp-multi/file1.txt")"
+          echo "file1 content: $CONTENT"
+          if [ "$CONTENT" != "Version: 1.2.3" ]; then
+            echo "FAIL: expected 'Version: 1.2.3' but got '$CONTENT'"
+            exit 1
+          fi
+          echo "PASS file1"
+
+      - name: Assert tokens replaced in file2
+        run: |
+          CONTENT="$(cat "$GITHUB_WORKSPACE/tmp-multi/file2.txt")"
+          echo "file2 content: $CONTENT"
+          if [ "$CONTENT" != "Env: production" ]; then
+            echo "FAIL: expected 'Env: production' but got '$CONTENT'"
+            exit 1
+          fi
+          echo "PASS file2"
