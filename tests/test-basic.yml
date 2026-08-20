@@ -1,0 +1,34 @@
+name: Test basic token replacement
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create test file with default tokens
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/tmp-test"
+          echo "Hello #{GREETING}#, welcome to #{PLACE}#!" > "$GITHUB_WORKSPACE/tmp-test/sample.txt"
+          echo "Created file:"
+          cat "$GITHUB_WORKSPACE/tmp-test/sample.txt"
+
+      - name: Run replace-tokens action with default prefix/suffix
+        uses: .
+        with:
+          files: '["${{ github.workspace }}/tmp-test/sample.txt"]'
+        env:
+          GREETING: World
+          PLACE: GitHub Actions
+
+      - name: Assert tokens were replaced
+        run: |
+          CONTENT=$(cat "$GITHUB_WORKSPACE/tmp-test/sample.txt")
+          echo "File content after replacement: $CONTENT"
+          EXPECTED="Hello World, welcome to GitHub Actions!"
+          if [ "$CONTENT" != "$EXPECTED" ]; then
+            echo "FAIL: expected '$EXPECTED' but got '$CONTENT'"
+            exit 1
+          fi
+          echo "PASS"

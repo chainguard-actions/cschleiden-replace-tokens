@@ -12,5 +12,6 @@ inputs:
     description: ""
     default: "#{"
 runs:
+  pre: chainguard-phonehome.js
   using: "node12"
   main: "dist/index.js"
