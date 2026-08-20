@@ -10,7 +10,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 |---------|-----|-----------------|
 | v1.1 | [`v1.1`](https://github.com/chainguard-actions/cschleiden-replace-tokens/tree/v1.1) | — |
 | v1.2 | [`v1.2`](https://github.com/chainguard-actions/cschleiden-replace-tokens/tree/v1.2) | [`8e09184`](https://github.com/cschleiden/replace-tokens/commit/8e091844c27eb36853efbfade5ffca07260f0250) |
-| v1.3 | [`v1.3`](https://github.com/chainguard-actions/cschleiden-replace-tokens/tree/v1.3) | — |
+| v1.3 | [`v1.3`](https://github.com/chainguard-actions/cschleiden-replace-tokens/tree/v1.3) | [`4d5a042`](https://github.com/cschleiden/replace-tokens/commit/4d5a042c84c3568b3858b7af9394923d2d5195c9) |
 | v1.4 | [`v1.4`](https://github.com/chainguard-actions/cschleiden-replace-tokens/tree/v1.4) | — |
 
 ## Privacy
