@@ -1,0 +1,30 @@
+name: Test missing env var replaces token with empty string
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create file with token that has no matching env var
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/tmp-missing"
+          echo "Value: #{UNDEFINED_TOKEN_XYZ}#" > "$GITHUB_WORKSPACE/tmp-missing/test.txt"
+          cat "$GITHUB_WORKSPACE/tmp-missing/test.txt"
+
+      - id: replace
+        uses: .
+        with:
+          files: '["${{ github.workspace }}/tmp-missing/test.txt"]'
+        # No env var set for UNDEFINED_TOKEN_XYZ — should be replaced with empty string
+
+      - name: Assert token replaced with empty string
+        run: |
+          CONTENT=$(cat "$GITHUB_WORKSPACE/tmp-missing/test.txt")
+          echo "content: '$CONTENT'"
+          if [ "$CONTENT" != "Value: " ]; then
+            echo "FAIL: expected 'Value: ' (empty replacement) but got '$CONTENT'"
+            exit 1
+          fi
+          echo "PASS"
