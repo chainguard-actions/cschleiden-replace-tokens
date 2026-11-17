@@ -4,8 +4,13 @@
   "version": "v1.4",
   "commit_sha": "63252851d87eb5cb853019ba8538b5c51813779d",
   "url": "https://github.com/cschleiden/replace-tokens",
-  "policy_sha": "d636be7e43ef829af6e853da6b3c7566db9f72fe",
+  "policy_sha": "374911c4be584df24e6da57af2d990570ef0f859",
   "test_policy_sha": "843adf9e4b8f85d0c08b27b9d0b09dd094b54702",
   "test_agent_version": "2",
-  "harden_agent_version": "2"
+  "harden_agent_version": "2",
+  "dist_artifact": {
+    "gcs_uri": "gs://patch-actions-node-artifacts/dist-artifacts/cschleiden/replace-tokens/v1.4/sha256-67cb33bfac811f35b0c02d29ddf36cc3d227729b763331b369100fda84d15601.tar.gz",
+    "sha256": "67cb33bfac811f35b0c02d29ddf36cc3d227729b763331b369100fda84d15601",
+    "size_bytes": 61829
+  }
 }
